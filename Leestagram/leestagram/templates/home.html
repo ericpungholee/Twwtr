@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="jumbotron jumbotron-fluid" style="background-image: url('/static/profile_pics/panorama-seoul-night-horizontal-107173590.jpg');">
+    <div class="container">
+      <h1 class="display-4" style="color: white;" ><strong>Welcome to Twwtr</strong></h1>
+      <p class="lead" style="color: white;"><strong>Share your thoughts.</strong></p>
+    </div>
+  </div>
+
+{% for post in posts.items %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card" style="margin-bottom: 20px;">
+                <div class="card-header bg-primary text-white">
+                    <img class="rounded-circle article-img img-fluid" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+                    <h3><a style="color: white;" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h3>
+                    <a class="mr-2 text-white" href="{{ url_for('profile', username=post.author.username) }}" width="200" height="200">{{ post.author.username }}</a>
+                    <small class="mr-2 text-white">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                </div>
+                <div class="card-body">
+                    {{ post.likes|length }}
+                    {% if current_user.id in post.likes|map(attribute="user_id")|list %}
+                        <a href="/like-post/{{post.id}}"><i class="fas fa-thumbs-up"></i></a>
+                    {% else %}
+                        <a href="/like-post/{{post.id}}"><i class="far fa-thumbs-up"></i></a>
+                    {% endif %}
+                    <p class="card-text">{{ post.content }}</p>
+
+
+
+
+                    <div class="collapse" id="comments-{{post.id}}">
+                        <div class="card">
+                            <div class="card-body" id="comments-expanded-{{ post.id }}">
+                                {% for comment in post.comments %}
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="w-75">
+                                            <a href="{{ url_for('profile', username=comment.user.username) }}">{{ comment.user.username }}</a>: {{ comment.content }}
+                                        </div>
+                                        <div class="w-25 d-flex justify-content-end">
+                                            <small class="text-muted">
+                                                {{ comment.date_posted.strftime('%Y-%m-%d') }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+            
+
+
+
+
+                    <p class="card-text">
+                        {% if post.comments|length > 0 %}
+                            <a data-bs-toggle="collapse" href="#comments-{{post.id}}" role="button">
+                                <small>View {{post.comments|length}} Comments</small>
+                            </a>
+                        {% else %}
+                            <small class="text-muted">No Comments</small>
+                        {% endif %}
+                    </p>
+
+
+                    <form method="POST" action="{{ url_for('create_comment', post_id=post.id) }}" class="mx-auto w-50" style="width: 100%; max-width: 500px; margin: 0 auto;">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            {% if form.content.errors %}
+                            {{ form.content(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.content.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ form.content(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group mt-4">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+          <li class="page-item {% if posts.page == page_num %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">...</span>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </nav>
+  
+
+{% endblock content %}  

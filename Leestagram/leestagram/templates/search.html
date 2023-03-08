@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+<br/><p style="padding: 10px;">Results for "{{ searched }}" ({{ users.count() }})<p>
+
+
+
+{% for user in users %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-header bg-primary text-white">
+                        <img class="rounded-circle article-img img-fluid" src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}">
+                        <a class="mr-2 text-white" style="font-size: larger;" href="{{ url_for('profile', username=user.username) }}" width="200" height="200">{{ user.username }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+{% endfor %}
+{% endblock content %}

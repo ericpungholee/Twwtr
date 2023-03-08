@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<article class="media content-section d-flex flex-column justify-content-between h-100">
+  <div class="d-flex align-items-center mb-3">
+    <img class="rounded-circle article-img mr-3" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}" alt="Profile picture">
+    <div class="article-metadata">
+      <a class="font-weight-bold" href="{{ url_for('profile', username=post.author.username) }}">{{ post.author.username }}</a>
+      <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+    </div>
+  </div>
+  <h2 class="article-title mb-3 d-inline-block" style="max-width: 500px; overflow: hidden; white-space: normal; display: block;">{{ post.title }}</h2>
+
+
+  
+  {{ post.likes|length }}
+  {% if current_user.id in post.likes|map(attribute="user_id")|list %}
+    <a href="/like-post/{{post.id}}"><i class="fas fa-thumbs-up"></i></a>
+  {% else %}
+    <a href="/like-post/{{post.id}}"><i class="far fa-thumbs-up"></i></a>
+  {% endif %}
+
+
+
+    
+    
+
+  
+  
+  
+  {% if current_user == post.author %}
+  <div class="btn-group d-inline-block">
+    <button
+      type="button"
+      class="btn btn-sm btn-primary dropdown-toggle"
+      data-bs-toggle="dropdown"
+    >
+    </button>
+    <ul class="dropdown-menu">
+      <li>
+        <a
+          class="btn btn-secondary btn-sm mr-1 mx-1 dropdown-item"
+          href="{{ url_for('update_post', post_id=post.id) }}"
+        >
+          Update
+        </a>
+      </li>
+      <li>
+        <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
+          <input class="btn btn-danger btn-sm mx-1 dropdown-item" type="submit" value="Delete">
+        </form>
+      </li>
+    </ul>
+  </div>
+{% endif %}
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-12">
+        <div class="card" style="margin-bottom: 20px;">
+          <div class="container" style="width: 90%; max-width: 2500px; max-height: 1500px; overflow: hidden;">
+            <p>{{ post.content }}</p>
+          </div>
+  
+        </div>
+    </div>
+</div>
+</div>
+
+        
+
+
+
+
+    
+    
+    
+    <div id="comments-{{post.id}}">
+      <div class="card">
+        <section class="card-body" id="comments-expanded-{{ post.id }}">
+          {% for comment in post.comments %}
+            <div class="d-flex justify-content-between align-items-center w-100 mb-2">
+              <br />
+              <div style="width: 1000px; height: 50px; overflow-wrap: break-word">
+                <a href="{{ url_for('profile', username=post.author.username) }}">{{ comment.user.username }}</a>: {{ comment.content }}
+              </div>              
+              <div class="d-flex justify-content-end pl-2">
+                <div class="btn-group">
+                  <div style="width: 120px; text-align: right;">
+                    {% if current_user.id == comment.user_id %}
+                      <div class="btn-group">
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-primary dropdown-toggle"
+                          data-bs-toggle="dropdown"
+                        ></button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a
+                              href="/delete-comment/{{comment.id}}"
+                              class="dropdown-item btn-sm"
+                            >Delete</a>
+                          </li>
+                        </ul>
+                      </div>
+                    {% endif %} 
+                    <small class="text-muted comment-date mt-1">
+                      <time
+                        datetime="{{ comment.date_posted.strftime('%Y-%m-%dT%H:%M:%SZ') }}"
+                        format="%Y-%m-%d"
+                      >{{ comment.date_posted.strftime('%Y-%m-%d') }}</time>
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br />
+            <hr>
+          {% endfor %}         
+          <form method="POST" action="{{ url_for('create_comment', post_id=post.id) }}" class="" style="margin: 0 auto; width: 1100px;">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {% if form.content.errors %}
+                    {{ form.content(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.content.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.content(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="form-group mt-4">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+        
+        
+            </div>
+        </div>
+    </div>
+    <br />
+  </div>
+</article>
+
+
+
+{% endblock content %}
+    

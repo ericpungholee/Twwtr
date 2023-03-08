@@ -1,0 +1,128 @@
+{% extends "layout.html" %}
+{% block content %}
+<!-- Profile -->
+<div class="container mt-5">
+    <div class="card bg-light">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col-md-4 text-center">
+            <img src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}" class="rounded-circle article-img img-fluid">
+            <h1 class="mt-3">{{ user.username }}</h1>
+          </div>
+          <div class="col-md-8">
+            <div class="row">
+              <div class="col-md-4 text-center">
+                <h3>Twtts</h3>
+                <p>{{ posts.total }}</p>
+              </div>
+              <div class="col-md-4 text-center"></div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-12">
+                {% if not user.bio%}
+                    <p></p>
+                {% else %}
+                    <p>{{ user.bio }}</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+
+  {% for post in posts.items %}
+  <div class="container mt-5">
+      <div class="row">
+          <div class="col-md-8 offset-md-2">
+              <div class="card" style="margin-bottom: 20px;">
+                  <div class="card-header bg-primary text-white">
+                      <img class="rounded-circle article-img img-fluid" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+                      <h3><a style="color: white;" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h3>
+                      <a class="mr-2 text-white" href="{{ url_for('profile', username=post.author.username) }}" width="200" height="200">{{ post.author.username }}</a>
+                      <small class="mr-2 text-white">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                  </div>
+                  <div class="card-body">
+                      {{ post.likes|length }}
+                      {% if current_user.id in post.likes|map(attribute="user_id")|list %}
+                          <a href="/like-post/{{post.id}}"><i class="fas fa-thumbs-up"></i></a>
+                      {% else %}
+                          <a href="/like-post/{{post.id}}"><i class="far fa-thumbs-up"></i></a>
+                      {% endif %}
+                      <p class="card-text">{{ post.content }}</p>
+  
+  
+  
+  
+                      <div class="collapse" id="comments-{{post.id}}">
+                          <div class="card">
+                              <div class="card-body" id="comments-expanded-{{ post.id }}">
+                                  {% for comment in post.comments %}
+                                      <div class="d-flex justify-content-between align-items-center">
+                                          <div class="w-75">
+                                              <a href="{{ url_for('profile', username=comment.user.username) }}">{{ comment.user.username }}</a>: {{ comment.content }}
+                                          </div>
+                                          <div class="w-25 d-flex justify-content-end">
+                                              <small class="text-muted">
+                                                  {{ comment.date_posted.strftime('%Y-%m-%d') }}
+                                              </small>
+                                          </div>
+                                      </div>
+                                      <hr>
+                                  {% endfor %}
+                              </div>
+                          </div>
+                      </div>
+                      
+              
+  
+  
+  
+  
+                      <p class="card-text">
+                          {% if post.comments|length > 0 %}
+                              <a data-bs-toggle="collapse" href="#comments-{{post.id}}" role="button">
+                                  <small>View {{post.comments|length}} Comments</small>
+                              </a>
+                          {% else %}
+                              <small class="text-muted">No Comments</small>
+                          {% endif %}
+                      </p>
+                      
+
+                      <form method="POST" action="{{ url_for('create_comment', post_id=post.id) }}" class="mx-auto w-50" style="width: 100%; max-width: 500px; margin: 0 auto;">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            {% if form.content.errors %}
+                            {{ form.content(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.content.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ form.content(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group mt-4">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+
+
+
+
+
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  {% endfor %}
+
+
+{% endblock content %}  

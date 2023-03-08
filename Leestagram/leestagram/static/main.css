@@ -1,0 +1,67 @@
+.inline-block {
+  display: inline-block;
+}
+
+.comment-box {
+    max-width: 500px; /* set the maximum width for the comment box */
+    overflow: hidden; /* hide any content that exceeds the maximum width */
+  }
+
+
+
+
+.btn-group {
+  position: relative;
+}
+
+h2.article-title {
+  border-bottom: 1px solid #ccc;
+}
+.content-section {
+  border: 1px solid #ccc; /* thin border */
+  padding: 10px; /* add some padding to ensure that the elements inside the content section don't touch the wall */
+}
+.media {
+  display: flex;
+  align-items: center;
+}
+
+a.article-title:hover {
+  color: #e9ecef;
+  text-decoration: none;
+}
+
+
+.article-img {
+  height: 65px;
+  width: 65px;
+  margin-right: 16px;
+}
+
+.article-metadata {
+  padding-bottom: 1px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #fbe4e4
+}
+
+.article-metadata a:hover {
+  color: rgb(255, 254, 254);
+  text-decoration: none;
+}
+
+.article-svg {
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+}
+
+.account-img {
+  height: 125px;
+  width: 125px;
+  margin-right: 20px;
+  margin-bottom: 16px;
+}
+
+.account-heading {
+  font-size: 2.5rem;
+}
